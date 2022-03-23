@@ -46,44 +46,24 @@ exports.findAll = (req, res) => {
     let productName = req.query.name;
     let minCost = req.query.minCost;
     let maxCost = req.query.maxCost;
-    let promise;
-    if (productName) {
-        promise = Product.findAll({
+    if(minCost==undefined)
+        minCost=0
+    if(maxCost==undefined)
+        maxCost=1000000
+    if(productName==undefined)
+        productName=''
+    
+    Product.findAll({
             where: {
-                name: productName
-            }
-        });
-    } else if (minCost && maxCost) {
-
-        promise = Product.findAll({
-            where: {
+                name:{
+                    [Op.substring]: productName
+                },
                 cost: {
                     [Op.gte]: minCost,
                     [Op.lte]: maxCost
                 }
             }
-        });
-    }else if(minCost){
-        promise = Product.findAll({
-            where: {
-                cost: {
-                    [Op.gte]: minCost
-                }
-            }
-        });
-    }else if(maxCost){
-        promise = Product.findAll({
-            where: {
-                cost: {
-                    [Op.lte]: maxCost
-                }
-            }
-        });
-    }
-    else {
-        promise = Product.findAll();
-    }
-    promise.then(products => {
+    }).then(products => {
         res.status(200).send(products);
     }).catch(err => {
         res.status(500).send({
@@ -169,77 +149,33 @@ exports.delete = (req, res) => {
      */
 exports.getProductsUnderCategory = (req, res) => {
     const categoryId = parseInt(req.params.categoryId);
-
-    // Product.findAll({
-    //     where: {
-    //         categoryId: categoryId
-    //     }
-    // }).then(products => {
-    //     res.status(200).send(products);
-    // }).catch(err => {
-    //     res.status(500).send({
-    //         message: "Some Internal error while fetching  products based on the category id "
-    //     })
-    // })
-
-
     let productName = req.query.name;
     let minCost = req.query.minCost;
     let maxCost = req.query.maxCost;
-    let promise;
-    if (productName) {
-        promise = Product.findAll({
-            where: {
-                name: productName,
-                categoryId: categoryId
-            }
-        });
-    } else if (minCost && maxCost) {
+    if(minCost==undefined)
+        minCost=0
+    if(maxCost==undefined)
+        maxCost=1000000
 
-        promise = Product.findAll({
+
+    Product.findAll({
             where: {
+                categoryId: categoryId,
+                name:{
+                    [Op.substring]: productName
+                },
                 cost: {
                     [Op.gte]: minCost,
                     [Op.lte]: maxCost
-                },
-                categoryId: categoryId
+                }
             }
-        });
-    }else if(minCost){
-        promise = Product.findAll({
-            where: {
-                cost: {
-                    [Op.gte]: minCost
-                },
-                categoryId: categoryId
-            }
-        });
-    }else if(maxCost){
-        promise = Product.findAll({
-            where: {
-                cost: {
-                    [Op.lte]: maxCost
-                },
-                categoryId: categoryId
-            }
-        });
-    }
-    else {
-        promise = Product.findAll({
-            where: {
-                        categoryId: categoryId
-                    }
-        });
-    }
-    promise.then(products => {
+        }).then(products => {
         res.status(200).send(products);
     }).catch(err => {
         res.status(500).send({
-            message: "Some Internal error while fetching all the products"
+            message: "Some Internal error while fetching  products based on the category id "
         })
     })
-
-
 
 }
 
