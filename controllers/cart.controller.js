@@ -18,8 +18,6 @@ exports.create = (req, res) => {
     const cart = {
         userId: req.body.userId  // We will get this from the middleware
     };
-    console.log("$$$$$$");
-    console.log(req);
     const itemIds = req.body.items;
     Cart.create(cart).then(cart => {
         res.status(201).send(cart);
@@ -36,7 +34,7 @@ exports.create = (req, res) => {
  */
 exports.update = (req, res) => {
     const cartId = req.params.id;
-    console.log("$$$ ",req);
+
     Cart.findByPk(cartId).then(cart => {
         console.log(cart);
         Product.findAll({
